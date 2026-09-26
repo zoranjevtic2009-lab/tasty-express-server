@@ -169,9 +169,8 @@
                 </div>
             </div>
 
-            <!-- Right Controls: Theme, Auth, Cart (Praćenje prebačeno dole za mobilne) -->
+            <!-- Right Controls: Theme, Auth, Cart -->
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Praćenje Porudžbine - Vidljivo na većim ekranima -->
                 <button onclick="toggleOrderTracking()" class="hidden sm:flex relative items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-xs font-semibold text-gray-700 dark:text-gray-300 transition-all btn-interact" title="Praćenje Porudžbine">
                     <i class="fa-solid fa-truck-fast text-brand-600 text-sm"></i>
                     <span class="text-xs">Praćenje</span>
@@ -193,7 +192,7 @@
         </div>
     </header>
 
-    <!-- Mobile Tracking Bar (Prikazuje se samo na telefonima ispod zaglavlja) -->
+    <!-- Mobile Tracking Bar -->
     <div class="flex sm:hidden bg-gray-100 dark:bg-slate-800/80 border-b border-gray-200 dark:border-slate-800 px-4 py-2 items-center justify-between">
         <span class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Status vaše dostave:</span>
         <button onclick="toggleOrderTracking()" class="relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold shadow-sm btn-interact">
@@ -891,11 +890,39 @@
             { id: 'dr8', name: 'Mineralna Voda Knjaz Miloš 0.5l', category: 'drinks', price: 160, rating: 4.7, image: 'https://images.unsplash.com/photo-1560023907-5f339617ea30?auto=format&fit=crop&w=600&q=80', desc: 'Gazirana prirodna mineralna voda.', hasAddons: false }
         ];
 
-        let PRODUCTS = JSON.parse(localStorage.getItem('tasty_products')) || DEFAULT_PRODUCTS;
+        let PRODUCTS = [];
         let activeOrder = JSON.parse(localStorage.getItem('tasty_active_order')) || null;
 
-        function saveProductsToStorage() {
-            localStorage.setItem('tasty_products', JSON.stringify(PRODUCTS));
+        // Funkcija za preuzimanje menija sa servera (da se ažurira svuda)
+        async function fetchProductsFromServer() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/products`);
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    PRODUCTS = data;
+                } else {
+                    PRODUCTS = DEFAULT_PRODUCTS;
+                    await saveAllProductsToServer(); // Ako je prazno na serveru, postavi podrazumevane
+                }
+            } catch (err) {
+                console.error("Greška pri učitavanju menija sa servera, koristim lokalne podatke:", err);
+                PRODUCTS = JSON.parse(localStorage.getItem('tasty_products')) || DEFAULT_PRODUCTS;
+            }
+            renderProducts();
+            renderAdminDeleteList();
+        }
+
+        // Funkcija za snimanje celog menija na server
+        async function saveAllProductsToServer() {
+            try {
+                await fetch(`${SERVER_URL}/api/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(PRODUCTS)
+                });
+            } catch (err) {
+                console.error("Greška pri čuvanju proizvoda na serveru:", err);
+            }
         }
 
         const ADDONS_DATA = {
@@ -937,7 +964,7 @@
 
         window.onload = function() {
             renderCategoryTabs();
-            renderProducts();
+            fetchProductsFromServer();
             updateAuthUI();
             startSlideTimer();
             fetchAdminOrdersFromServer();
@@ -1620,7 +1647,7 @@
             container.appendChild(div);
         }
 
-        function handleAdminAddProduct(e) {
+        async function handleAdminAddProduct(e) {
             e.preventDefault();
             const editId = document.getElementById('admin-p-edit-id').value;
             const title = document.getElementById('admin-p-title').value.trim();
@@ -1666,7 +1693,7 @@
                 showToast(`Novi proizvod "${title}" dodat u meni!`);
             }
 
-            saveProductsToStorage();
+            await saveAllProductsToServer(); // Automatski šalje na server da se ažurira svuda
             resetAdminForm();
             renderProducts();
             renderAdminDeleteList();
@@ -1710,10 +1737,10 @@
             document.getElementById('admin-p-cancel-btn').classList.add('hidden');
         }
 
-        function deleteProductFromMenu(productId) {
+        async function deleteProductFromMenu(productId) {
             if (confirm('Da li ste sigurni da želite da izbrišete ovu stvar sa menija?')) {
                 PRODUCTS = PRODUCTS.filter(p => p.id !== productId);
-                saveProductsToStorage();
+                await saveAllProductsToServer(); // Sinhronizuje brisanje na serveru za sve
                 renderProducts();
                 renderAdminDeleteList();
                 showToast('Proizvod je izbrisan sa menija.');
