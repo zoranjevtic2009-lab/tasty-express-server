@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="sr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TastyExpress - Dostava Hrane i Pića</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.96)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.85', transform: 'scale(1.03)' }
+                        },
+                        floatAnimation: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-10px) rotate(1deg)' },
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.25s ease-out forwards',
+                        slideUp: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        pulseGlow: 'pulseGlow 2s infinite',
+                        floatSlow: 'floatAnimation 4s ease-in-out infinite'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hover-lift {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.12);
+        }
+
+        .btn-interact {
+            transition: all 0.2s ease;
+        }
+        .btn-interact:active {
+            transform: scale(0.95);
+        }
+
+        .carousel-slide {
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+            pointer-events: none;
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-slate-900 dark:text-gray-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Delivery Banner -->
+    <div id="top-banner" class="bg-gradient-to-r from-brand-600 via-rose-500 to-amber-500 text-white text-xs sm:text-sm font-medium py-2 px-4 text-center shadow-inner flex items-center justify-between">
+        <div class="flex-1 text-center flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bolt text-yellow-300 animate-bounce"></i>
+            <span>Brza dostava za prosečno <strong>25 min</strong>! Besplatna dostava za porudžbine preko 1500 RSD.</span>
+        </div>
+        <button onclick="document.getElementById('top-banner').remove()" class="text-white/80 hover:text-white ml-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 glass border-b border-gray-200 dark:border-slate-800 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Logo & Location -->
+            <div class="flex items-center gap-6">
+                <a href="#" class="flex items-center gap-2 group">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-black tracking-tight text-gray-900 dark:text-white group-hover:text-brand-600 transition-colors">Tasty<span class="text-brand-600">Express</span></span>
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 font-semibold tracking-wider uppercase">Dostava Hrane & Pića</span>
+                    </div>
+                </a>
+
+                <!-- City Selector -->
+                <div class="hidden md:flex items-center gap-2 bg-gray-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl text-sm border border-gray-200 dark:border-slate-700">
+                    <i class="fa-solid fa-location-dot text-brand-600"></i>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Grad:</span>
+                    <select id="city-select" onchange="updateCity(this.value)" class="bg-transparent font-semibold text-gray-800 dark:text-gray-200 focus:outline-none cursor-pointer text-sm">
+                        <option value="Beograd" class="bg-white dark:bg-slate-800">Beograd</option>
+                        <option value="Novi Sad" class="bg-white dark:bg-slate-800">Novi Sad</option>
+                        <option value="Niš" class="bg-white dark:bg-slate-800">Niš</option>
+                        <option value="Kragujevac" class="bg-white dark:bg-slate-800">Kragujevac</option>
+                        <option value="Subotica" class="bg-white dark:bg-slate-800">Subotica</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Global Search Bar -->
+            <div class="hidden lg:flex flex-1 max-w-md mx-4">
+                <div class="relative w-full">
+                    <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Pretraži pice, meze, pića, dezerte..." class="w-full bg-gray-100 dark:bg-slate-800 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500 border border-transparent dark:border-slate-700 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                </div>
+            </div>
+
+            <!-- Right Controls: Tracking, Theme, Auth, Cart -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleOrderTracking()" class="relative hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-xs font-semibold text-gray-700 dark:text-gray-300 transition-all btn-interact">
+                    <i class="fa-solid fa-truck-fast text-brand-600 text-sm"></i>
+                    <span>Praćenje Porudžbine</span>
+                    <span id="active-order-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900 animate-ping"></span>
+                </button>
+
+                <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 flex items-center justify-center text-gray-600 dark:text-yellow-400 transition-all btn-interact" title="Promeni temu">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <div id="user-auth-area"></div>
+
+                <button onclick="toggleCartModal()" class="relative bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-brand-600/30 flex items-center gap-2.5 btn-interact">
+                    <i class="fa-solid fa-cart-shopping text-base"></i>
+                    <span class="hidden sm:inline">Korpa</span>
+                    <span id="cart-badge-count" class="bg-white text-brand-600 text-xs font-black px-2 py-0.5 rounded-full shadow-sm">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner & Promotion -->
+    <section class="relative bg-gradient-to-br from-slate-900 via-rose-950 to-slate-900 text-white overflow-hidden py-12 md:py-16">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#f43f5e_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="space-y-4 text-center md:text-left max-w-xl">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold uppercase tracking-wider animate-pulse">
+                    <i class="fa-solid fa-fire"></i> Specijalna Ponudbena Akcija
+                </span>
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                    Omiljena Hrana & Piće <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">Na Tvom Pragu.</span>
+                </h1>
+                <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                    Izaberi iz bogate ponude svežih pica, sočnih burgera, pasterija, slatkiša, hladnih koktela i vrhunskih piva. Brza dostava uz mogućnost dodavanja priloga!
+                </p>
+                <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-4 text-xs font-semibold text-gray-300">
+                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-clock text-amber-400"></i> Dostava 20-35 min
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-star text-yellow-400"></i> Ocena 4.9/5
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-shield-halved text-emerald-400"></i> Sigurna Online Uplata
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative w-full max-w-md">
+                <div class="relative h-72 sm:h-80 w-full rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10 bg-slate-800/80">
+                    <div class="carousel-slide active absolute inset-0 w-full h-full flex flex-col justify-end p-6">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80" alt="Double Smash Burger" class="absolute inset-0 w-full h-full object-cover animate-floatSlow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        <div class="relative z-10">
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-widest px-2.5 py-1 bg-amber-400/20 border border-amber-400/30 rounded-full inline-block mb-1">Hit Dana #1</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-white">Double Smash Burger</h3>
+                            <p class="text-xs text-gray-300">Dupla juneća pljeskavica, hrskava slanina i čedar sir</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-slide absolute inset-0 w-full h-full flex flex-col justify-end p-6">
+                        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80" alt="Truffle Pizza" class="absolute inset-0 w-full h-full object-cover animate-floatSlow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        <div class="relative z-10">
+                            <span class="text-xs font-bold text-rose-400 uppercase tracking-widest px-2.5 py-1 bg-rose-400/20 border border-rose-400/30 rounded-full inline-block mb-1">Preporuka Šefa</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-white">Truffle Gourmet Pizza</h3>
+                            <p class="text-xs text-gray-300">Sveži crni tartufi, mocarela, pršuta i rikota</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-slide absolute inset-0 w-full h-full flex flex-col justify-end p-6">
+                        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80" alt="Mojito Cocktail" class="absolute inset-0 w-full h-full object-cover animate-floatSlow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        <div class="relative z-10">
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest px-2.5 py-1 bg-emerald-400/20 border border-emerald-400/30 rounded-full inline-block mb-1">Osveženje</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-white">Fresh Cubano Mojito</h3>
+                            <p class="text-xs text-gray-300">Beli rum, sveža nana, sok od limete i led</p>
+                        </div>
+                    </div>
+
+                    <button onclick="prevHeroSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-sm flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button onclick="nextHeroSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-sm flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+
+                    <div class="absolute top-4 right-4 z-20 flex gap-1.5">
+                        <span class="hero-dot w-2 h-2 rounded-full bg-white opacity-100 transition-opacity"></span>
+                        <span class="hero-dot w-2 h-2 rounded-full bg-white opacity-40 transition-opacity"></span>
+                        <span class="hero-dot w-2 h-2 rounded-full bg-white opacity-40 transition-opacity"></span>
+                    </div>
+                </div>
+
+                <div class="absolute -bottom-4 -left-4 bg-brand-600 text-white p-3 sm:p-4 rounded-2xl shadow-xl border border-white/20 hidden sm:block animate-bounce z-20">
+                    <p class="text-xs font-bold">Popust do 20%</p>
+                    <p class="text-[10px] text-rose-200">na sve koktele petkom!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Categories -->
+    <section class="sticky top-20 z-30 glass border-b border-gray-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div id="category-bar" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none"></div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div class="block lg:hidden">
+            <div class="relative w-full">
+                <input type="text" id="mobile-search-input" onkeyup="handleMobileSearch()" placeholder="Pretraži ponudu hrane i pića..." class="w-full bg-white dark:bg-slate-800 text-sm rounded-xl pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 dark:border-slate-800 pb-4">
+            <div>
+                <h2 id="current-category-title" class="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                    <i class="fa-solid fa-utensils text-brand-600"></i> Svi Proizvodi
+                </h2>
+                <p id="current-category-desc" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Izaberite omiljena jela i pića sa opcijom prilagođavanja sastojaka</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <span id="items-count-badge" class="text-xs font-bold text-gray-500 bg-gray-200 dark:bg-slate-800 dark:text-gray-400 px-3 py-1.5 rounded-lg">
+                    0 artikala
+                </span>
+                <select id="sort-select" onchange="handleSort(this.value)" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer">
+                    <option value="default">Sortiranje: Podrazumevano</option>
+                    <option value="price-asc">Cena: Niža ka višoj</option>
+                    <option value="price-desc">Cena: Viša ka nižoj</option>
+                    <option value="rating">Najbolje ocenjeno</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+        <div id="empty-products" class="hidden text-center py-16 space-y-4">
+            <div class="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-gray-400 text-3xl">
+                <i class="fa-solid fa-cookie-bite"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300">Nismo pronašli traženi proizvod</h3>
+            <p class="text-xs text-gray-500 max-w-sm mx-auto">Pokušajte sa drugim pojmom za pretragu ili izaberite drugu kategoriju iz menija.</p>
+            <button onclick="selectCategory('all')" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold hover:bg-brand-700 btn-interact">
+                Prikaži sve proizvode
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-gray-400 text-xs border-t border-slate-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="text-lg font-black text-white">TastyExpress</span>
+                </div>
+                <p class="text-gray-400 text-xs leading-relaxed">
+                    Najbrža i najpouzdanija dostava sveže hrane, poslastica i osvežavajućih pića u vašem gradu. Uživanje u svakom zalogaju!
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 text-sm">Gradovi Dostave</h4>
+                <ul class="space-y-2">
+                    <li>Beograd (Centar, Novi Beograd, Vračar, Zvezdara)</li>
+                    <li>Novi Sad (Centar, Liman, Detelinara)</li>
+                    <li>Niš, Kragujevac, Subotica</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 text-sm">Način Plaćanja</h4>
+                <div class="flex flex-wrap gap-2 text-xl text-gray-300">
+                    <i class="fa-brands fa-cc-visa hover:text-white transition-colors" title="Visa"></i>
+                    <i class="fa-brands fa-cc-mastercard hover:text-white transition-colors" title="Mastercard"></i>
+                    <i class="fa-brands fa-cc-paypal hover:text-white transition-colors" title="Paypal"></i>
+                    <i class="fa-solid fa-money-bill-wave hover:text-white transition-colors" title="Gotovina"></i>
+                </div>
+                <p class="mt-2 text-[11px] text-gray-500">Sigurna 256-bitna SSL enkripcija uplate.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 text-sm">Pristup Sistemima</h4>
+                <button onclick="openLoginModal()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-700 text-xs font-semibold flex items-center justify-center gap-2 transition-all btn-interact">
+                    <i class="fa-solid fa-user-shield text-brand-500"></i>
+                    <span>Prijava / Admin Panel</span>
+                </button>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 py-4 text-center text-gray-500 text-[11px]">
+            &copy; 2026 TastyExpress Srbija. Sva prava zadržana.
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- 1. CUSTOMIZATION MODAL -->
+    <div id="customize-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 dark:border-slate-800 flex flex-col">
+            <div class="relative h-48 w-full overflow-hidden">
+                <img id="custom-item-img" src="" alt="Proizvod" class="w-full h-full object-cover">
+                <button onclick="closeCustomizeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 to-transparent p-4">
+                    <h3 id="custom-item-title" class="text-xl font-black text-white"></h3>
+                    <p id="custom-item-base-price" class="text-xs text-amber-400 font-bold"></p>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6 flex-1">
+                <div id="size-selection-container" class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Izaberi veličinu / porciju</label>
+                    <div id="size-options" class="grid grid-cols-3 gap-2"></div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Izaberi priloge i dodatke</label>
+                        <span class="text-[10px] text-gray-400">Višestruki izbor</span>
+                    </div>
+                    <div id="addons-list" class="space-y-2"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Napomena za kuhinju / šanka</label>
+                    <textarea id="custom-item-notes" rows="2" placeholder="npr. Bez luka, ekstra ljuto, dobro rešeno..." class="w-full bg-gray-50 dark:bg-slate-800 text-xs rounded-xl p-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-slate-800">
+                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300">Količina:</span>
+                    <div class="flex items-center gap-3 bg-gray-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl">
+                        <button onclick="changeCustomizeQty(-1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 shadow-sm font-bold text-gray-700 dark:text-gray-200 flex items-center justify-center hover:bg-gray-200">-</button>
+                        <span id="custom-qty-val" class="text-sm font-black w-6 text-center">1</span>
+                        <button onclick="changeCustomizeQty(1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 shadow-sm font-bold text-gray-700 dark:text-gray-200 flex items-center justify-center hover:bg-gray-200">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between gap-4">
+                <div>
+                    <span class="text-[10px] text-gray-400 block uppercase font-bold">Ukupno sa prilozima</span>
+                    <span id="custom-total-price" class="text-lg font-black text-brand-600">0 RSD</span>
+                </div>
+                <button onclick="confirmCustomizedAddToCart()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-xl text-sm shadow-md shadow-brand-600/30 flex items-center justify-center gap-2 btn-interact">
+                    <i class="fa-solid fa-cart-plus"></i>
+                    <span>Dodaj u Korpu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. LOGIN MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-slate-800 relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-brand-600/10 text-brand-600 flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-xl font-black text-gray-900 dark:text-white">Prijava na sistem</h3>
+                <p class="text-xs text-gray-500 mt-1">Unesite Vaše podatke za prijavu ili pristupi admin panelu</p>
+            </div>
+
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-700 dark:text-gray-300 block mb-1">E-mail adresa</label>
+                    <div class="relative">
+                        <input type="email" id="login-email" required placeholder="zoran@gmail.com" class="w-full bg-gray-50 dark:bg-slate-800 text-xs rounded-xl pl-10 pr-3 py-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <i class="fa-regular fa-envelope absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-gray-700 dark:text-gray-300 block mb-1">Lozinka</label>
+                    <div class="relative">
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-gray-50 dark:bg-slate-800 text-xs rounded-xl pl-10 pr-3 py-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl p-3 text-[11px] text-amber-800 dark:text-amber-300 flex gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-600 text-sm flex-shrink-0 mt-0.5"></i>
+                    <span><strong>Za Admin Pristup:</strong> email: <code class="bg-amber-100 dark:bg-amber-900 px-1 rounded">zoran@gmail.com</code>, šifra: <code class="bg-amber-100 dark:bg-amber-900 px-1 rounded">zoran</code></span>
+                </div>
+
+                <div id="login-error-msg" class="hidden text-xs text-rose-500 font-bold text-center"></div>
+
+                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-xs shadow-md shadow-brand-600/30 btn-interact">
+                    Prijavi se
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. SHOPPING CART MODAL -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden justify-end animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md h-full flex flex-col shadow-2xl animate-slideUp">
+            <div class="p-4 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping text-brand-600 text-lg"></i>
+                    <h3 class="text-lg font-black text-gray-900 dark:text-white">Vaša Korpa</h3>
+                </div>
+                <button onclick="toggleCartModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+
+            <div class="p-4 border-t border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50 space-y-3">
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span>Međuzbir:</span>
+                        <span id="cart-subtotal">0 RSD</span>
+                    </div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span>Dostava:</span>
+                        <span id="cart-shipping">190 RSD</span>
+                    </div>
+                    <div class="flex justify-between text-base font-black text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-slate-700">
+                        <span>Ukupno:</span>
+                        <span id="cart-total" class="text-brand-600">0 RSD</span>
+                    </div>
+                </div>
+
+                <button id="checkout-btn" onclick="openCheckoutStep()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 btn-interact">
+                    <span>Naruči Odmah</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. CHECKOUT MODAL FORM -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-gray-100 dark:border-slate-800 relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-black text-gray-900 dark:text-white mb-1">Dostava i Plaćanje</h3>
+            <p class="text-xs text-gray-500 mb-6">Popunite podatke za brzu isporuku hrane</p>
+
+            <form onsubmit="processOrderSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="font-bold text-gray-700 dark:text-gray-300 block mb-1">Ime i Prezime *</label>
+                    <input type="text" id="order-name" required placeholder="Petar Petrović" class="w-full bg-gray-50 dark:bg-slate-800 rounded-xl p-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-bold text-gray-700 dark:text-gray-300 block mb-1">Telefon *</label>
+                        <input type="tel" id="order-phone" required placeholder="064 123 4567" class="w-full bg-gray-50 dark:bg-slate-800 rounded-xl p-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="font-bold text-gray-700 dark:text-gray-300 block mb-1">Grad</label>
+                        <input type="text" id="order-city-readonly" readonly class="w-full bg-gray-100 dark:bg-slate-700 font-bold rounded-xl p-3 border border-gray-200 dark:border-slate-600 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-bold text-gray-700 dark:text-gray-300 block mb-1">Adresa i sprat *</label>
+                    <input type="text" id="order-address" required placeholder="Knez Mihailova 10, sprat 3, stan 12" class="w-full bg-gray-50 dark:bg-slate-800 rounded-xl p-3 border border-gray-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+
+                <div>
+                    <label class="font-bold text-gray-700 dark:text-gray-300 block mb-1">Način Plaćanja</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="border border-gray-200 dark:border-slate-700 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="payment" value="cash" checked onchange="toggleCardInputs(false)" class="text-brand-600 focus:ring-brand-500">
+                            <i class="fa-solid fa-money-bill-wave text-emerald-500"></i>
+                            <span class="font-semibold">Gotovina</span>
+                        </label>
+                        <label class="border border-gray-200 dark:border-slate-700 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="payment" value="card" onchange="toggleCardInputs(true)" class="text-brand-600 focus:ring-brand-500">
+                            <i class="fa-solid fa-credit-card text-brand-500"></i>
+                            <span class="font-semibold">Platna kartica</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="card-details-fields" class="hidden space-y-3 bg-gray-50 dark:bg-slate-800/50 p-3 rounded-2xl border border-gray-200 dark:border-slate-700">
+                    <div>
+                        <label class="font-semibold text-gray-600 dark:text-gray-400 block mb-1">Broj Kartice</label>
+                        <input type="text" id="card-number" placeholder="4532 •••• •••• 8892" class="w-full bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-gray-200 dark:border-slate-700">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="font-semibold text-gray-600 dark:text-gray-400 block mb-1">Ističe (MM/YY)</label>
+                            <input type="text" id="card-exp" placeholder="08/28" class="w-full bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-gray-200 dark:border-slate-700">
+                        </div>
+                        <div>
+                            <label class="font-semibold text-gray-600 dark:text-gray-400 block mb-1">CVC / CVV</label>
+                            <input type="password" maxlength="3" id="card-cvc" placeholder="123" class="w-full bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-gray-200 dark:border-slate-700">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-lg shadow-emerald-600/20 btn-interact mt-4">
+                    Potvrdi i Poruči
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. TRACKING MODAL -->
+    <div id="tracking-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-gray-100 dark:border-slate-800 relative space-y-6">
+            <button onclick="toggleOrderTracking()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div>
+                <span class="px-3 py-1 bg-brand-100 text-brand-600 dark:bg-brand-950 dark:text-brand-400 text-[10px] font-black rounded-full uppercase tracking-wider">Live Praćenje Dostave</span>
+                <h3 class="text-xl font-black text-gray-900 dark:text-white mt-2">Status Porudžbine #<span id="track-order-id">---</span></h3>
+                <p class="text-xs text-gray-500">Procenjeno vreme dostave: <strong id="track-eta" class="text-brand-600">22 min</strong></p>
+            </div>
+
+            <div class="space-y-6 relative before:absolute before:inset-0 before:left-4 before:w-0.5 before:bg-gray-200 dark:before:bg-slate-800">
+                <div id="step-1" class="relative flex items-start gap-4 transition-all">
+                    <div class="step-icon w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs font-bold z-10 transition-colors">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white">Porudžbina Primljena</h4>
+                        <p class="text-[11px] text-gray-500">Restoran je prihvatio porudžbinu</p>
+                    </div>
+                </div>
+
+                <div id="step-2" class="relative flex items-start gap-4 transition-all">
+                    <div class="step-icon w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs font-bold z-10 transition-colors">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white">Priprema Hrane & Pića</h4>
+                        <p class="text-[11px] text-gray-500">Kuhinja sprema vaše artikle</p>
+                    </div>
+                </div>
+
+                <div id="step-3" class="relative flex items-start gap-4 transition-all">
+                    <div class="step-icon w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs font-bold z-10 transition-colors">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white">Dostavljač Na Putu</h4>
+                        <p class="text-[11px] text-gray-500">Dostavljač Marko vozi ka vašoj adresi</p>
+                    </div>
+                </div>
+
+                <div id="step-4" class="relative flex items-start gap-4 transition-all">
+                    <div class="step-icon w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs font-bold z-10 transition-colors">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white">Iporučeno</h4>
+                        <p class="text-[11px] text-gray-500">Uživajte u obroku!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden bg-slate-800 h-40 relative flex items-center justify-center border border-slate-700">
+                <div class="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:12px_12px] opacity-30"></div>
+                <div class="text-center z-10 space-y-1">
+                    <i class="fa-solid fa-location-crosshairs text-brand-500 text-2xl animate-spin"></i>
+                    <p class="text-xs text-white font-bold">GPS Praćenje Kurira Uživo</p>
+                    <p class="text-[10px] text-gray-400">Adresa: <span id="track-address-display">---</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. ADMIN PANEL MODAL -->
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-gray-100 dark:border-slate-800 relative space-y-6">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-slate-800 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/10 text-purple-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white">Admin Upravljački Panel</h3>
+                    <p class="text-xs text-gray-500">Prijavljeni ste kao: <span class="text-brand-600 font-bold">zoran@gmail.com</span></p>
+                </div>
+            </div>
+
+            <div class="flex border-b border-gray-200 dark:border-slate-800 gap-4 text-xs font-bold">
+                <button onclick="switchAdminTab('orders')" id="admin-tab-orders" class="pb-2 border-b-2 border-brand-600 text-brand-600">
+                    Sve Porudžbine
+                </button>
+                <button onclick="switchAdminTab('products')" id="admin-tab-products" class="pb-2 text-gray-400 hover:text-gray-600">
+                    Upravljanje Meni-jem
+                </button>
+            </div>
+
+            <div id="admin-section-orders" class="space-y-4">
+                <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Aktivne i Prethodne Porudžbine</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3 rounded-l-lg">ID</th>
+                                <th class="p-3">Kupac</th>
+                                <th class="p-3">Adresa & Grad</th>
+                                <th class="p-3">Stavke</th>
+                                <th class="p-3">Iznos</th>
+                                <th class="p-3">Trenutna Etapa</th>
+                                <th class="p-3 rounded-r-lg">Promeni Etapu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table" class="divide-y divide-gray-100 dark:divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-section-products" class="hidden space-y-6">
+                <!-- Forma za Dodavanje / Izmenu -->
+                <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-2xl space-y-4">
+                    <h4 id="admin-form-title" class="text-xs font-bold text-gray-800 dark:text-gray-200 uppercase">Dodaj Novi Proizvod u Meni</h4>
+                    <form onsubmit="handleAdminAddProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <input type="hidden" id="admin-p-edit-id" value="">
+                        <input type="text" id="admin-p-title" placeholder="Naziv Proizvoda" required class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <select id="admin-p-cat" required class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-700">
+                            <option value="pizza">Pice</option>
+                            <option value="burgers">Burgeri</option>
+                            <option value="pasta">Paste</option>
+                            <option value="dessert">Dezerti</option>
+                            <option value="alcohol">Alkohol & Kokteli</option>
+                            <option value="drinks">Bezalkoholna Pića</option>
+                        </select>
+                        <input type="number" id="admin-p-price" placeholder="Cena (RSD)" required class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <input type="text" id="admin-p-image" placeholder="URL Slike (ili ostavi prazno)" class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <textarea id="admin-p-desc" placeholder="Opis jela ili pića..." class="sm:col-span-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 h-20 resize-none"></textarea>
+                        
+                        <!-- DINAMIČKI ADICIONALI / PRILOZI -->
+                        <div class="sm:col-span-2 bg-white dark:bg-slate-900 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-bold text-gray-700 dark:text-gray-300 text-[11px] uppercase tracking-wider">Mogući Prilozi / Dodaci za ovaj proizvod</label>
+                                <button type="button" onclick="addAdminAddonInputRow()" class="px-2.5 py-1 bg-brand-500/10 text-brand-600 hover:bg-brand-600 hover:text-white rounded-lg text-[10px] font-bold transition-all">
+                                    <i class="fa-solid fa-plus mr-1"></i> Dodaj Prilog
+                                </button>
+                            </div>
+                            <div id="admin-addons-inputs-container" class="space-y-2">
+                                <!-- Dinamički se dodaju polja za naslov i cenu priloga -->
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-2 flex gap-2">
+                            <button type="submit" id="admin-p-submit-btn" class="flex-1 bg-brand-600 text-white font-bold py-2.5 rounded-xl hover:bg-brand-700 btn-interact">
+                                Sačuvaj i Objavi Proizvod
+                            </button>
+                            <button type="button" id="admin-p-cancel-btn" onclick="resetAdminForm()" class="hidden px-4 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold py-2.5 rounded-xl hover:bg-gray-300 btn-interact">
+                                Odustani
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="space-y-3 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-gray-200 dark:border-slate-700 text-xs">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider text-[11px] flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-brand-600"></i> Postojeći Artikli na Meniju
+                    </h4>
+                    <div id="admin-delete-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 text-xs font-bold">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+            <span id="toast-text">Poruka obaveštenja</span>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Code (Povezano sa MongoDB Serverom) -->
+    <script>
+        const SERVER_URL = 'http://localhost:3000';
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let selectedCity = 'Beograd';
+        let currentUser = null;
+        let cart = [];
+        let activeCustomizingItem = null;
+        let customizeQty = 1;
+        let allOrders = [];
+
+        let currentSlideIndex = 0;
+        let slideInterval = null;
+
+        function showHeroSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            if (!slides.length) return;
+
+            if (index >= slides.length) currentSlideIndex = 0;
+            else if (index < 0) currentSlideIndex = slides.length - 1;
+            else currentSlideIndex = index;
+
+            slides.forEach((slide, idx) => {
+                if (idx === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, idx) => {
+                if (idx === currentSlideIndex) {
+                    dot.classList.remove('opacity-40');
+                    dot.classList.add('opacity-100');
+                } else {
+                    dot.classList.remove('opacity-100');
+                    dot.classList.add('opacity-40');
+                }
+            });
+        }
+
+        function nextHeroSlide() {
+            showHeroSlide(currentSlideIndex + 1);
+            restartSlideTimer();
+        }
+
+        function prevHeroSlide() {
+            showHeroSlide(currentSlideIndex - 1);
+            restartSlideTimer();
+        }
+
+        function startSlideTimer() {
+            slideInterval = setInterval(() => {
+                showHeroSlide(currentSlideIndex + 1);
+            }, 4000);
+        }
+
+        function restartSlideTimer() {
+            clearInterval(slideInterval);
+            startSlideTimer();
+        }
+
+        let DEFAULT_PRODUCTS = [
+            { id: 'p1', name: 'Capricciosa', category: 'pizza', price: 990, rating: 4.8, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80', desc: 'Pelat, mocarela, šunka, sveži šampinjoni, masline, origano.', hasAddons: true },
+            { id: 'p2', name: 'Margherita', category: 'pizza', price: 820, rating: 4.7, image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80', desc: 'Paradajz sos, mocarela, sveži bosiljak, devičansko maslinovo ulje.', hasAddons: true },
+            { id: 'p3', name: 'Quattro Formaggi', category: 'pizza', price: 1090, rating: 4.9, image: 'https://images.unsplash.com/photo-1573821663912-569905455b1c?auto=format&fit=crop&w=600&q=80', desc: 'Mocarela, gorgonzola, parmezan, edamer, pavlaka.', hasAddons: true },
+            { id: 'p4', name: 'Vesuvio', category: 'pizza', price: 920, rating: 4.6, image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=600&q=80', desc: 'Pelat, sir, šunka, feferoni, origano.', hasAddons: true },
+            { id: 'p5', name: 'Pepperoni', category: 'pizza', price: 1040, rating: 4.9, image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80', desc: 'Pikantna kulen salama, pelat, mocarela, ljuta tucana paprika.', hasAddons: true },
+            { id: 'p6', name: 'BBQ Chicken', category: 'pizza', price: 1120, rating: 4.8, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80', desc: 'Grilovani piletina, BBQ sos, crveni luk, kukuruz, mocarela.', hasAddons: true },
+            { id: 'p7', name: 'Vegetarijana', category: 'pizza', price: 880, rating: 4.5, image: 'https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?auto=format&fit=crop&w=600&q=80', desc: 'Sveža paprika, tikvice, kukuruz, šampinjoni, masline, sos od paradajza.', hasAddons: true },
+            { id: 'p8', name: 'Truffle Pizza', category: 'pizza', price: 1350, rating: 5.0, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80', desc: 'Krema od crnih tartufa, goveđa pršuta, rikota, parmezan.', hasAddons: true },
+
+            { id: 'b1', name: 'Classic Burger', category: 'burgers', price: 790, rating: 4.7, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80', desc: '100% juneće meso, čedar sir, zelena salata, paradajz, kiselikrastavčići, kućni sos.', hasAddons: true },
+            { id: 'b2', name: 'Double Bacon Smash', category: 'burgers', price: 1050, rating: 4.9, image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80', desc: 'Dupla smash junetina, hrustava slanina, dupli čedar, karamelizovani luk.', hasAddons: true },
+            { id: 'b3', name: 'Truffle Mushroom Burger', category: 'burgers', price: 1190, rating: 4.8, image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80', desc: 'Juneća pljeskavica, sos od tartufa, grilovani šampinjoni, švajcarski sir.', hasAddons: true },
+            { id: 'b4', name: 'Crispy Chicken Burger', category: 'burgers', price: 850, rating: 4.8, image: 'https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80', desc: 'Hrskavi pileći file u panadi, cole-slaw salata, majonez sa mirodjijom.', hasAddons: true },
+            { id: 'b5', name: 'Veggie Deluxe', category: 'burgers', price: 780, rating: 4.4, image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=600&q=80', desc: 'Pljeskavica od leblebija i povrća, avokado namaz, vege majonez, rukola.', hasAddons: true },
+            { id: 'b6', name: 'Spicy Jalapeño', category: 'burgers', price: 920, rating: 4.7, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80', desc: 'Junetina, seckani habanero/halapenjo, ljuti sir, sriracha majonez.', hasAddons: true },
+
+            { id: 'pas1', name: 'Carbonara', category: 'pasta', price: 890, rating: 4.8, image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=600&q=80', desc: 'Špageti, gvanćale/panceta, žumance, pekorino romano, crni biber.', hasAddons: true },
+            { id: 'pas2', name: 'Bolognese', category: 'pasta', price: 850, rating: 4.7, image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80', desc: 'Taljateke u sporokuvanom sosu od junećeg i svinjskog mesa sa paradajzom.', hasAddons: true },
+            { id: 'pas3', name: 'Quattro Formaggi Pasta', category: 'pasta', price: 940, rating: 4.8, image: 'https://images.unsplash.com/photo-1555949258-eb67b2808201?auto=format&fit=crop&w=600&q=80', desc: 'Pene u kremastom sosu od četiri vrste sira sa pečenim orahom.', hasAddons: true },
+            { id: 'pas4', name: 'Pesto Genovese', category: 'pasta', price: 820, rating: 4.6, image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80', desc: 'Pene sa domaćim pestom od bosiljka, pinjola, belog luka i parmezana.', hasAddons: true },
+            { id: 'pas5', name: 'Arrabbiata', category: 'pasta', price: 750, rating: 4.5, image: 'https://images.unsplash.com/photo-1621996346565-e3def61632f0?auto=format&fit=crop&w=600&q=80', desc: 'Ljutkasti pelat sos sa belim lukom, čilijem i svežim peršunom.', hasAddons: true },
+            { id: 'pas6', name: 'Seafood Linguine', category: 'pasta', price: 1280, rating: 4.9, image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80', desc: 'Lingvini sa plodovima mora, dagnjama, škampima i belim vinom.', hasAddons: true },
+
+            { id: 'd1', name: 'Lava Cake', category: 'dessert', price: 490, rating: 4.9, image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80', desc: 'Topli čokoladni kolač sa tečnim srcem i kuglom vanila sladoleda.', hasAddons: false },
+            { id: 'd2', name: 'Tiramisu', category: 'dessert', price: 450, rating: 4.8, image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80', desc: 'Klasični italijanski desert sa maskarponeom, piškotama i espresom.', hasAddons: false },
+            { id: 'd3', name: 'Cheesecake Šumsko Voće', category: 'dessert', price: 480, rating: 4.9, image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80', desc: 'Kremasti čizkejk sa prelivom od svežeg šumskog voća.', hasAddons: false },
+            { id: 'd4', name: 'Palačinke Nutella & Plazma', category: 'dessert', price: 420, rating: 4.9, image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=600&q=80', desc: 'Dve velike palačinke obilato punjene Nutelom i mlevenom Plazmom.', hasAddons: true },
+            { id: 'd5', name: 'Choco Soufflé', category: 'dessert', price: 520, rating: 4.7, image: 'https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80', desc: 'Pahuljasti sufle od tamne belgijske čokolade.', hasAddons: false },
+            { id: 'd6', name: 'Gelato Italijanski', category: 'dessert', price: 380, rating: 4.8, image: 'https://images.unsplash.com/photo-1560008511-11c63416e52d?auto=format&fit=crop&w=600&q=80', desc: '3 kugle zanatskog sladoleda po izboru (Čokolada, Lešnik, Pistaci, Jagoda).', hasAddons: false },
+
+            { id: 'a1', name: 'Mojito', category: 'alcohol', price: 680, rating: 4.8, image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80', desc: 'Beli rum, limeta, sveža nana, kisele vode, smeđi šećer.', hasAddons: false },
+            { id: 'a2', name: 'Aperol Spritz', category: 'alcohol', price: 690, rating: 4.9, image: 'https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&fit=crop&w=600&q=80', desc: 'Aperol, Prosecco pjenušavo vino, kiseljak, kriška pomorandže.', hasAddons: false },
+            { id: 'a3', name: 'Piña Colada', category: 'alcohol', price: 720, rating: 4.7, image: 'https://images.unsplash.com/photo-1546171753-97d7676e4182?auto=format&fit=crop&w=600&q=80', desc: 'Rum, kokosov krem, sok od ananasa.', hasAddons: false },
+            { id: 'a4', name: 'Margarita', category: 'alcohol', price: 690, rating: 4.8, image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80', desc: 'Tekila, Triple Sec, sveži sok od limete, so na rubu čaše.', hasAddons: false },
+            { id: 'a5', name: 'Long Island Iced Tea', category: 'alcohol', price: 820, rating: 4.9, image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80', desc: 'Vodka, rum, gin, tekila, triple sec, limun, Coca-Cola.', hasAddons: false },
+            { id: 'a6', name: 'Espresso Martini', category: 'alcohol', price: 750, rating: 4.9, image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=600&q=80', desc: 'Vodka, Kahlua liker od kafe, sveže pripremljen espreso.', hasAddons: false },
+            { id: 'a7', name: 'Negroni', category: 'alcohol', price: 740, rating: 4.7, image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&w=600&q=80', desc: 'Džin, Campari, slatki crveni vermut.', hasAddons: false },
+            { id: 'a8', name: 'Zaječarsko Pivo 0.5l', category: 'alcohol', price: 240, rating: 4.6, image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=80', desc: 'Svetlo domaće pivo sa tradicijom.', hasAddons: false },
+            { id: 'a9', name: 'Heineken 0.4l', category: 'alcohol', price: 320, rating: 4.7, image: 'https://images.unsplash.com/photo-1618886614638-80e3c103d31a?auto=format&fit=crop&w=600&q=80', desc: 'Premium svetsko lager pivo.', hasAddons: false },
+            { id: 'a10', name: 'Craft IPA Pivo', category: 'alcohol', price: 420, rating: 4.8, image: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?auto=format&fit=crop&w=600&q=80', desc: 'Zanatsko pivo sa bogatom aromom hmelja i citrusa.', hasAddons: false },
+            { id: 'a11', name: 'Vino Chablis 0.75l', category: 'alcohol', price: 2900, rating: 4.9, image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80', desc: 'Vrhunsko belo francusko vino Chardonnay.', hasAddons: false },
+            { id: 'a12', name: 'Vino Probus Crveno 0.75l', category: 'alcohol', price: 2400, rating: 4.8, image: 'https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?auto=format&fit=crop&w=600&q=80', desc: 'Domaće premium crveno vino punog ukusa.', hasAddons: false },
+            { id: 'a13', name: 'Šljivovica Rakija 0.05l', category: 'alcohol', price: 280, rating: 4.8, image: 'https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=600&q=80', desc: 'Stara srpska prepečenica od šljive 5 godina stara.', hasAddons: false },
+            { id: 'a14', name: "Jack Daniel's 0.05l", category: 'alcohol', price: 390, rating: 4.9, image: 'https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=600&q=80', desc: 'Tennessee Viski neponovljivog ukusa.', hasAddons: false },
+            { id: 'a15', name: 'Grey Goose Vodka 0.05l', category: 'alcohol', price: 450, rating: 4.9, image: 'https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=600&q=80', desc: 'Luksuzna francuska votka.', hasAddons: false },
+            { id: 'a16', name: 'Tequila Olmeca 0.05l', category: 'alcohol', price: 340, rating: 4.7, image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80', desc: 'Meksička tekila sa limunom i solju.', hasAddons: false },
+
+            { id: 'dr1', name: 'Coca-Cola 0.33l', category: 'drinks', price: 210, rating: 4.8, image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80', desc: 'Osvežavajuće gazirano piće u limenci.', hasAddons: false },
+            { id: 'dr2', name: 'Fanta 0.33l', category: 'drinks', price: 210, rating: 4.7, image: 'https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&w=600&q=80', desc: 'Gazirani sok sa ukusom narandže.', hasAddons: false },
+            { id: 'dr3', name: 'Sprite 0.33l', category: 'drinks', price: 210, rating: 4.7, image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=600&q=80', desc: 'Osvežavajući sok sa ukusom limuna i limete.', hasAddons: false },
+            { id: 'dr4', name: 'Cockta 0.275l', category: 'drinks', price: 220, rating: 4.9, image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80', desc: 'Legendarno piće sa ekstraktom šipka i bilja.', hasAddons: false },
+            { id: 'dr5', name: 'Red Bull 0.25l', category: 'drinks', price: 340, rating: 4.8, image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80', desc: 'Energetski napitak koji vam daje krila.', hasAddons: false },
+            { id: 'dr6', name: 'Ceđena Narandža 0.3l', category: 'drinks', price: 320, rating: 4.9, image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80', desc: '100% sveže ceđene pomorandže bez dodatog šećera.', hasAddons: false },
+            { id: 'dr7', name: 'Domaća Limunada 0.3l', category: 'drinks', price: 280, rating: 4.8, image: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?auto=format&fit=crop&w=600&q=80', desc: 'Sveže ceđeni limun sa nanom i ledom.', hasAddons: false },
+            { id: 'dr8', name: 'Mineralna Voda Knjaz Miloš 0.5l', category: 'drinks', price: 160, rating: 4.7, image: 'https://images.unsplash.com/photo-1560023907-5f339617ea30?auto=format&fit=crop&w=600&q=80', desc: 'Gazirana prirodna mineralna voda.', hasAddons: false }
+        ];
+
+        let PRODUCTS = JSON.parse(localStorage.getItem('tasty_products')) || DEFAULT_PRODUCTS;
+        let activeOrder = JSON.parse(localStorage.getItem('tasty_active_order')) || null;
+
+        function saveProductsToStorage() {
+            localStorage.setItem('tasty_products', JSON.stringify(PRODUCTS));
+        }
+
+        const ADDONS_DATA = {
+            pizza: [
+                { id: 'a_cheese', name: 'Ekstra Mocarela', price: 140 },
+                { id: 'a_ketchup', name: 'Domaći Kečap (Blagi/Ljuti)', price: 60 },
+                { id: 'a_garlic', name: 'Beli luk sos', price: 80 },
+                { id: 'a_olives', name: 'Crne Masline', price: 90 },
+                { id: 'a_origano', name: 'Ekstra Origano', price: 0 }
+            ],
+            burgers: [
+                { id: 'ab_bacon', name: 'Hrskava Slanina', price: 120 },
+                { id: 'ab_cheese', name: 'Ekstra Čedar sir', price: 90 },
+                { id: 'ab_fries', name: 'Porcija Pomfrita uz burger', price: 190 },
+                { id: 'ab_sauce', name: 'Truffle Majonez', price: 100 },
+                { id: 'ab_jalapeno', name: 'Halapenjo papričice', price: 80 }
+            ],
+            pasta: [
+                { id: 'ap_parm', name: 'Rendani Parmezan', price: 110 },
+                { id: 'ap_chili', name: 'Ljuta tucana paprika', price: 40 },
+                { id: 'ap_bread', name: 'Beli hleb sa maslinovim uljem', price: 90 }
+            ],
+            dessert: [
+                { id: 'ad_icecream', name: 'Kugla vanila sladoleda', price: 120 },
+                { id: 'ad_nutella', name: 'Ekstra Prelliv Nutella', price: 100 },
+                { id: 'ad_plazma', name: 'Posip Mlevena Plazma', price: 60 }
+            ]
+        };
+
+        const CATEGORIES = [
+            { id: 'all', name: 'Sve', icon: 'fa-border-all' },
+            { id: 'pizza', name: 'Pice', icon: 'fa-pizza-slice' },
+            { id: 'burgers', name: 'Burgeri', icon: 'fa-burger' },
+            { id: 'pasta', name: 'Paste', icon: 'fa-bowl-food' },
+            { id: 'dessert', name: 'Dezerti', icon: 'fa-ice-cream' },
+            { id: 'alcohol', name: 'Alkohol & Kokteli', icon: 'fa-martini-glass-citrus' },
+            { id: 'drinks', name: 'Sokovi & Voda', icon: 'fa-bottle-water' }
+        ];
+
+        window.onload = function() {
+            renderCategoryTabs();
+            renderProducts();
+            updateAuthUI();
+            startSlideTimer();
+            fetchAdminOrdersFromServer();
+            
+            const savedCity = localStorage.getItem('tasty_city');
+            if (savedCity) {
+                selectedCity = savedCity;
+                document.getElementById('city-select').value = savedCity;
+            }
+
+            if (activeOrder && activeOrder.step < 4) {
+                document.getElementById('active-order-badge').classList.remove('hidden');
+            } else {
+                activeOrder = null;
+                localStorage.removeItem('tasty_active_order');
+            }
+        };
+
+        function renderCategoryTabs() {
+            const container = document.getElementById('category-bar');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="selectCategory('${cat.id}')" 
+                        class="category-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap btn-interact ${currentCategory === cat.id ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'}">
+                    <i class="fa-solid ${cat.icon}"></i>
+                    <span>${cat.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(catId) {
+            currentCategory = catId;
+            renderCategoryTabs();
+            const catObj = CATEGORIES.find(c => c.id === catId);
+            document.getElementById('current-category-title').innerHTML = `<i class="fa-solid ${catObj ? catObj.icon : 'fa-utensils'} text-brand-600"></i> ${catObj ? catObj.name : 'Svi Proizvodi'}`;
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const emptyState = document.getElementById('empty-products');
+
+            let filtered = PRODUCTS.filter(p => {
+                const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            const sortVal = document.getElementById('sort-select').value;
+            if (sortVal === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+            if (sortVal === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+            if (sortVal === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+
+            document.getElementById('items-count-badge').innerText = `${filtered.length} artikala`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-slate-700 shadow-sm hover-lift flex flex-col justify-between group transition-all">
+                    <div>
+                        <div class="relative h-44 overflow-hidden bg-gray-100 dark:bg-slate-700">
+                            <img src="${item.image}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-black text-amber-500 flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-star"></i>
+                                <span>${item.rating}</span>
+                            </div>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-extrabold text-base text-gray-900 dark:text-white leading-snug">${item.name}</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 space-y-3">
+                        <div class="flex items-center justify-between border-t border-gray-100 dark:border-slate-700/50 pt-3">
+                            <div>
+                                <span class="text-[10px] text-gray-400 block font-bold uppercase">Cena</span>
+                                <span class="text-lg font-black text-gray-900 dark:text-white">${item.price} <span class="text-xs text-brand-600 font-bold">RSD</span></span>
+                            </div>
+                            ${item.hasAddons ? `
+                                <button onclick="openCustomizeModal('${item.id}')" class="bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400 hover:bg-brand-600 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 btn-interact">
+                                    <i class="fa-solid fa-sliders text-xs"></i>
+                                    <span>Prilozi / Prilagodi</span>
+                                </button>
+                            ` : `
+                                <button onclick="quickAddToCart('${item.id}')" class="bg-gray-900 hover:bg-brand-600 text-white dark:bg-slate-700 dark:hover:bg-brand-600 p-2.5 rounded-xl text-xs font-bold transition-all btn-interact" title="Dodaj u korpu">
+                                    <i class="fa-solid fa-plus text-sm"></i>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderProducts();
+        }
+
+        function handleMobileSearch() {
+            searchQuery = document.getElementById('mobile-search-input').value;
+            renderProducts();
+        }
+
+        function handleSort(val) {
+            renderProducts();
+        }
+
+        function updateCity(city) {
+            selectedCity = city;
+            localStorage.setItem('tasty_city', city);
+            showToast(`Grad dostave promenjen na: ${city}`);
+        }
+
+        function openCustomizeModal(itemId) {
+            const item = PRODUCTS.find(p => p.id === itemId);
+            if (!item) return;
+
+            activeCustomizingItem = JSON.parse(JSON.stringify(item));
+            customizeQty = 1;
+
+            document.getElementById('custom-item-title').innerText = item.name;
+            document.getElementById('custom-item-base-price').innerText = `Osnovna cena: ${item.price} RSD`;
+            document.getElementById('custom-item-img').src = item.image;
+            document.getElementById('custom-item-notes').value = '';
+            document.getElementById('custom-qty-val').innerText = '1';
+
+            const sizeContainer = document.getElementById('size-selection-container');
+            const sizeOptions = document.getElementById('size-options');
+            
+            if (item.category === 'pizza') {
+                sizeContainer.classList.remove('hidden');
+                sizeOptions.innerHTML = `
+                    <label class="border dark:border-slate-700 rounded-xl p-2 text-center cursor-pointer hover:border-brand-500 block">
+                        <input type="radio" name="p-size" value="32" checked onchange="updateCustomizeTotal()" class="hidden peer">
+                        <div class="peer-checked:font-black peer-checked:text-brand-600 text-xs">Srednja 32cm</div>
+                        <div class="text-[10px] text-gray-400">Standard</div>
+                    </label>
+                    <label class="border dark:border-slate-700 rounded-xl p-2 text-center cursor-pointer hover:border-brand-500 block">
+                        <input type="radio" name="p-size" value="42" onchange="updateCustomizeTotal()" class="hidden peer">
+                        <div class="peer-checked:font-black peer-checked:text-brand-600 text-xs">Porodična 42cm</div>
+                        <div class="text-[10px] text-gray-400">+350 RSD</div>
+                    </label>
+                `;
+            } else {
+                sizeContainer.classList.add('hidden');
+            }
+
+            const addonsList = document.getElementById('addons-list');
+            let catAddons = (item.customAddons && item.customAddons.length > 0) ? item.customAddons : (ADDONS_DATA[item.category] || ADDONS_DATA['pizza']);
+
+            addonsList.innerHTML = catAddons.map(add => `
+                <label class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700/80 cursor-pointer text-xs transition-colors">
+                    <div class="flex items-center gap-2.5">
+                        <input type="checkbox" data-price="${add.price}" data-name="${add.name}" onchange="updateCustomizeTotal()" class="addon-checkbox rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                        <span class="font-semibold text-gray-800 dark:text-gray-200">${add.name}</span>
+                    </div>
+                    <span class="font-bold text-gray-500 dark:text-gray-400">${add.price > 0 ? '+' + add.price + ' RSD' : 'Besplatno'}</span>
+                </label>
+            `).join('');
+
+            updateCustomizeTotal();
+            document.getElementById('customize-modal').classList.remove('hidden');
+            document.getElementById('customize-modal').classList.add('flex');
+        }
+
+        function closeCustomizeModal() {
+            document.getElementById('customize-modal').classList.add('hidden');
+            document.getElementById('customize-modal').classList.remove('flex');
+        }
+
+        function changeCustomizeQty(delta) {
+            customizeQty = Math.max(1, customizeQty + delta);
+            document.getElementById('custom-qty-val').innerText = customizeQty;
+            updateCustomizeTotal();
+        }
+
+        function updateCustomizeTotal() {
+            if (!activeCustomizingItem) return;
+            let base = activeCustomizingItem.price;
+            const sizeRadio = document.querySelector('input[name="p-size"]:checked');
+            if (sizeRadio && sizeRadio.value === '42') base += 350;
+
+            let addonsCost = 0;
+            document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+                addonsCost += parseInt(cb.getAttribute('data-price') || '0');
+            });
+
+            const total = (base + addonsCost) * customizeQty;
+            document.getElementById('custom-total-price').innerText = `${total} RSD`;
+        }
+
+        function confirmCustomizedAddToCart() {
+            if (!activeCustomizingItem) return;
+
+            const selectedAddons = [];
+            document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+                selectedAddons.push(cb.getAttribute('data-name'));
+            });
+
+            const notes = document.getElementById('custom-item-notes').value.trim();
+            const sizeRadio = document.querySelector('input[name="p-size"]:checked');
+            let sizeLabel = '';
+            let basePrice = activeCustomizingItem.price;
+
+            if (sizeRadio) {
+                sizeLabel = sizeRadio.value === '42' ? 'Porodična 42cm' : '32cm';
+                if (sizeRadio.value === '42') basePrice += 350;
+            }
+
+            let addonsCost = 0;
+            document.querySelectorAll('.addon-checkbox:checked').forEach(cb => addonsCost += parseInt(cb.getAttribute('data-price') || '0'));
+            const unitPrice = basePrice + addonsCost;
+
+            const cartItem = {
+                id: activeCustomizingItem.id + '_' + Date.now(),
+                productId: activeCustomizingItem.id,
+                name: activeCustomizingItem.name + (sizeLabel ? ` (${sizeLabel})` : ''),
+                unitPrice: unitPrice,
+                qty: customizeQty,
+                addons: selectedAddons,
+                notes: notes,
+                image: activeCustomizingItem.image
+            };
+
+            cart.push(cartItem);
+            updateCartBadge();
+            closeCustomizeModal();
+            showToast(`Dodato u korpu: ${cartItem.name}`);
+        }
+
+        function quickAddToCart(itemId) {
+            const item = PRODUCTS.find(p => p.id === itemId);
+            if (!item) return;
+
+            const existing = cart.find(c => c.productId === item.id && (!c.addons || c.addons.length === 0));
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    id: item.id + '_' + Date.now(),
+                    productId: item.id,
+                    name: item.name,
+                    unitPrice: item.price,
+                    qty: 1,
+                    addons: [],
+                    notes: '',
+                    image: item.image
+                });
+            }
+
+            updateCartBadge();
+            showToast(`Dodato u korpu: ${item.name}`);
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            if (modal.classList.contains('hidden')) {
+                renderCartContent();
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function renderCartContent() {
+            const container = document.getElementById('cart-items-container');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-3">
+                        <i class="fa-solid fa-basket-shopping text-4xl text-gray-300 dark:text-slate-700"></i>
+                        <p class="text-xs text-gray-500 font-medium">Vaša korpa je prazna</p>
+                    </div>
+                `;
+                document.getElementById('cart-subtotal').innerText = '0 RSD';
+                document.getElementById('cart-total').innerText = '0 RSD';
+                document.getElementById('checkout-btn').disabled = true;
+                document.getElementById('checkout-btn').classList.add('opacity-50');
+                return;
+            }
+
+            document.getElementById('checkout-btn').disabled = false;
+            document.getElementById('checkout-btn').classList.remove('opacity-50');
+
+            let subtotal = 0;
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.unitPrice * item.qty;
+                subtotal += itemTotal;
+                return `
+                    <div class="bg-gray-50 dark:bg-slate-800 p-3 rounded-2xl flex gap-3 items-center border border-gray-100 dark:border-slate-700">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-xl object-cover">
+                        <div class="flex-1 space-y-1">
+                            <h4 class="font-extrabold text-xs text-gray-900 dark:text-white leading-tight">${item.name}</h4>
+                            ${item.addons && item.addons.length > 0 ? `<p class="text-[10px] text-brand-600 font-semibold">Prilozi: ${item.addons.join(', ')}</p>` : ''}
+                            ${item.notes ? `<p class="text-[10px] text-gray-400 italic">"${item.notes}"</p>` : ''}
+                            <div class="font-black text-xs text-gray-800 dark:text-gray-200">${itemTotal} RSD</div>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg text-xs font-bold">
+                                <button onclick="updateCartQty('${item.id}', -1)" class="text-gray-500">-</button>
+                                <span class="w-4 text-center">${item.qty}</span>
+                                <button onclick="updateCartQty('${item.id}', 1)" class="text-gray-500">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const shipping = 190;
+            document.getElementById('cart-subtotal').innerText = `${subtotal} RSD`;
+            document.getElementById('cart-total').innerText = `${subtotal + shipping} RSD`;
+        }
+
+        function updateCartQty(cartItemId, delta) {
+            const item = cart.find(c => c.id === cartItemId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) cart = cart.filter(c => c.id !== cartItemId);
+            updateCartBadge();
+            renderCartContent();
+        }
+
+        function removeFromCart(cartItemId) {
+            cart = cart.filter(c => c.id !== cartItemId);
+            updateCartBadge();
+            renderCartContent();
+        }
+
+        function updateCartBadge() {
+            const totalCount = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cart-badge-count').innerText = totalCount;
+        }
+
+        function openCheckoutStep() {
+            if (cart.length === 0) return;
+            toggleCartModal();
+            document.getElementById('order-city-readonly').value = selectedCity;
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('flex');
+        }
+
+        function toggleCardInputs(show) {
+            const fields = document.getElementById('card-details-fields');
+            if (show) fields.classList.remove('hidden');
+            else fields.classList.add('hidden');
+        }
+
+        async function processOrderSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('order-name').value;
+            const phone = document.getElementById('order-phone').value;
+            const address = document.getElementById('order-address').value;
+            const orderId = Math.floor(100000 + Math.random() * 900000);
+
+            const newOrder = {
+                id: orderId,
+                customer: name,
+                phone: phone,
+                city: selectedCity,
+                address: address,
+                items: [...cart],
+                step: 1,
+                status: 'Porudžbina Primljena',
+                createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newOrder)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    activeOrder = newOrder;
+                    localStorage.setItem('tasty_active_order', JSON.stringify(activeOrder));
+                    allOrders.push(activeOrder);
+
+                    cart = [];
+                    updateCartBadge();
+                    closeCheckoutModal();
+
+                    document.getElementById('active-order-badge').classList.remove('hidden');
+                    showToast(`Uspešno! Vaša porudžbina #${orderId} je primljena.`);
+                    toggleOrderTracking();
+                }
+            } catch (err) {
+                console.error("Greška pri slanju porudžbine:", err);
+                showToast("Greška: Server nije dostupan.");
+            }
+        }
+
+        async function fetchAdminOrdersFromServer() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/orders`);
+                allOrders = await response.json();
+                
+                // Ako je aktivna porudžbina korisnika dostigla etapu 4 (ili obrisana), sakrij dugme za praćenje
+                if (activeOrder) {
+                    const found = allOrders.find(o => String(o.id) === String(activeOrder.id));
+                    if (!found || found.step >= 4) {
+                        activeOrder = null;
+                        localStorage.removeItem('tasty_active_order');
+                        document.getElementById('active-order-badge').classList.add('hidden');
+                    }
+                }
+            } catch (err) {
+                console.error("Greška pri povlačenju porudžbina:", err);
+            }
+        }
+
+        function toggleOrderTracking() {
+            const modal = document.getElementById('tracking-modal');
+            if (modal.classList.contains('hidden')) {
+                if (!activeOrder) {
+                    showToast('Nemate aktivnih porudžbina za praćenje.');
+                    return;
+                }
+                document.getElementById('track-order-id').innerText = activeOrder.id;
+                document.getElementById('track-address-display').innerText = `${activeOrder.address}, ${activeOrder.city}`;
+                
+                updateTrackingStepper(activeOrder.step || 1);
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function updateTrackingStepper(currentStep) {
+            const icons = [
+                '<i class="fa-solid fa-check"></i>',
+                '<i class="fa-solid fa-fire"></i>',
+                '<i class="fa-solid fa-motorcycle"></i>',
+                '<i class="fa-solid fa-house-chimney"></i>'
+            ];
+
+            for (let i = 1; i <= 4; i++) {
+                const stepElem = document.getElementById(`step-${i}`);
+                const iconContainer = stepElem.querySelector('.step-icon');
+
+                if (i <= currentStep) {
+                    stepElem.classList.remove('opacity-50');
+                    iconContainer.className = 'step-icon w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold z-10 shadow-md transition-colors';
+                    iconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else {
+                    stepElem.classList.add('opacity-50');
+                    iconContainer.className = 'step-icon w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs font-bold z-10 transition-colors';
+                    iconContainer.innerHTML = icons[i - 1];
+                }
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('login-modal').classList.add('flex');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('flex');
+            document.getElementById('login-error-msg').classList.add('hidden');
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            if (email === 'zoran@gmail.com' && pass === 'zoran') {
+                currentUser = { email: 'zoran@gmail.com', name: 'Zoran (Administrator)', isAdmin: true };
+                showToast('Uspešna admin prijava! Dobrodošli Zoran.');
+                closeLoginModal();
+                updateAuthUI();
+                openAdminModal();
+            } else if (email && pass) {
+                currentUser = { email: email, name: email.split('@')[0], isAdmin: false };
+                showToast(`Dobrodošli nazad, ${currentUser.name}!`);
+                closeLoginModal();
+                updateAuthUI();
+            } else {
+                const err = document.getElementById('login-error-msg');
+                err.innerText = 'Pogrešan email ili lozinka!';
+                err.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            updateAuthUI();
+            showToast('Uspešno ste se odjavili.');
+        }
+
+        function updateAuthUI() {
+            const area = document.getElementById('user-auth-area');
+            if (currentUser) {
+                area.innerHTML = `
+                    <div class="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 p-1.5 pr-3 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 text-white font-black flex items-center justify-center text-xs">
+                            ${currentUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="hidden sm:flex flex-col text-left">
+                            <span class="text-xs font-bold text-gray-800 dark:text-gray-200">${currentUser.name}</span>
+                            ${currentUser.isAdmin ? '<span class="text-[9px] text-purple-500 font-bold uppercase tracking-wider">Admin</span>' : ''}
+                        </div>
+                        ${currentUser.isAdmin ? `<button onclick="openAdminModal()" class="ml-1 text-purple-600 hover:text-purple-700 p-1"><i class="fa-solid fa-gear text-sm"></i></button>` : ''}
+                        <button onclick="handleLogout()" class="ml-1 text-gray-400 hover:text-rose-500 p-1"><i class="fa-solid fa-right-from-bracket text-xs"></i></button>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = `
+                    <button onclick="openLoginModal()" class="px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-xs font-bold text-gray-700 dark:text-gray-200 transition-all btn-interact flex items-center gap-2">
+                        <i class="fa-solid fa-user text-brand-600"></i>
+                        <span class="hidden sm:inline">Prijava</span>
+                    </button>
+                `;
+            }
+        }
+
+        async function openAdminModal() {
+            if (!currentUser || !currentUser.isAdmin || currentUser.email !== 'zoran@gmail.com') {
+                showToast('Pristup odbijen! Admin panelu pristupa samo zoran@gmail.com');
+                openLoginModal();
+                return;
+            }
+
+            await fetchAdminOrdersFromServer();
+            renderAdminOrders();
+            renderAdminDeleteList();
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-modal').classList.add('flex');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-modal').classList.remove('flex');
+            resetAdminForm();
+        }
+
+        function switchAdminTab(tab) {
+            if (tab === 'orders') {
+                document.getElementById('admin-section-orders').classList.remove('hidden');
+                document.getElementById('admin-section-products').classList.add('hidden');
+                document.getElementById('admin-tab-orders').className = 'pb-2 border-b-2 border-brand-600 text-brand-600';
+                document.getElementById('admin-tab-products').className = 'pb-2 text-gray-400 hover:text-gray-600';
+                fetchAdminOrdersFromServer().then(() => renderAdminOrders());
+            } else {
+                document.getElementById('admin-section-orders').classList.add('hidden');
+                document.getElementById('admin-section-products').classList.remove('hidden');
+                document.getElementById('admin-tab-products').className = 'pb-2 border-b-2 border-brand-600 text-brand-600';
+                document.getElementById('admin-tab-orders').className = 'pb-2 text-gray-400 hover:text-gray-600';
+                renderAdminDeleteList();
+            }
+        }
+
+        function renderAdminOrders() {
+            const tbody = document.getElementById('admin-orders-table');
+            // Prikazujemo samo one porudžbine čija etapa je manja od 4 (jer se isporučene sklanjaju)
+            let activeOrdersList = allOrders.filter(ord => (ord.step || 1) < 4);
+
+            if (activeOrdersList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-6 text-gray-400 text-xs">Nema aktivnih porudžbina u bazi.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = activeOrdersList.map(ord => {
+                const totalSum = ord.items.reduce((acc, i) => acc + (i.unitPrice * i.qty), 0) + 190;
+                const currentStep = ord.step || 1;
+
+                return `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                        <td class="p-3 font-bold">#${ord.id}</td>
+                        <td class="p-3 font-semibold">${ord.customer}<br><span class="text-[10px] text-gray-400">${ord.phone}</span></td>
+                        <td class="p-3">${ord.address}, ${ord.city}</td>
+                        <td class="p-3">${ord.items.map(i => `${i.name} x${i.qty}`).join(', ')}</td>
+                        <td class="p-3 font-bold text-brand-600">${totalSum} RSD</td>
+                        <td class="p-3"><span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-full text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">Etapa ${currentStep} od 4</span></td>
+                        <td class="p-3">
+                            <select onchange="changeOrderStep('${ord.id}', this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-xs font-bold rounded-lg px-2 py-1 focus:outline-none cursor-pointer">
+                                <option value="1" ${currentStep === 1 ? 'selected' : ''}>1. Primljeno</option>
+                                <option value="2" ${currentStep === 2 ? 'selected' : ''}>2. Priprema Hrane</option>
+                                <option value="3" ${currentStep === 3 ? 'selected' : ''}>3. Dostavljač na putu</option>
+                                <option value="4" ${currentStep === 4 ? 'selected' : ''}>4. Isporučeno (Ukloni)</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function changeOrderStep(orderId, newStep) {
+            const stepNum = parseInt(newStep);
+            const stepNames = {
+                1: 'Porudžbina Primljena',
+                2: 'Priprema Hrane & Pića',
+                3: 'Dostavljač Na Putu',
+                4: 'Iporučeno'
+            };
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ step: stepNum, status: stepNames[stepNum] })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    await fetchAdminOrdersFromServer();
+                    renderAdminOrders();
+                    
+                    if (stepNum === 4) {
+                        showToast(`Porudžbina #${orderId} je isporučena i sklonjena sa panela.`);
+                        // Ako je to bila narudžbina ubačena od strane trenutnog klijenta, sakrij meni praćenja
+                        if (activeOrder && String(activeOrder.id) === String(orderId)) {
+                            activeOrder = null;
+                            localStorage.removeItem('tasty_active_order');
+                            document.getElementById('active-order-badge').classList.add('hidden');
+                            const trackingModal = document.getElementById('tracking-modal');
+                            if (!trackingModal.classList.contains('hidden')) {
+                                toggleOrderTracking();
+                            }
+                        }
+                    } else {
+                        showToast(`Status porudžbine #${orderId} ažuriran.`);
+                        if (activeOrder && String(activeOrder.id) === String(orderId)) {
+                            activeOrder.step = stepNum;
+                            localStorage.setItem('tasty_active_order', JSON.stringify(activeOrder));
+                            const trackingModal = document.getElementById('tracking-modal');
+                            if (!trackingModal.classList.contains('hidden')) {
+                                updateTrackingStepper(stepNum);
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Greška pri ažuriranju statusa:", err);
+            }
+        }
+
+        function addAdminAddonInputRow(name = '', price = '') {
+            const container = document.getElementById('admin-addons-inputs-container');
+            const rowId = 'addon_row_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+            
+            const div = document.createElement('div');
+            div.id = rowId;
+            div.className = "flex items-center gap-2";
+            div.innerHTML = `
+                <input type="text" value="${name}" placeholder="Naziv priloga (npr. Extra Sir)" class="admin-addon-name flex-1 bg-gray-50 dark:bg-slate-800 p-2 rounded-lg border border-gray-200 dark:border-slate-700 text-xs">
+                <input type="number" value="${price}" placeholder="Cena (RSD)" class="admin-addon-price w-28 bg-gray-50 dark:bg-slate-800 p-2 rounded-lg border border-gray-200 dark:border-slate-700 text-xs">
+                <button type="button" onclick="document.getElementById('${rowId}').remove()" class="p-2 text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function handleAdminAddProduct(e) {
+            e.preventDefault();
+            const editId = document.getElementById('admin-p-edit-id').value;
+            const title = document.getElementById('admin-p-title').value.trim();
+            const cat = document.getElementById('admin-p-cat').value;
+            const price = parseFloat(document.getElementById('admin-p-price').value);
+            const img = document.getElementById('admin-p-image').value.trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80';
+            const desc = document.getElementById('admin-p-desc').value.trim();
+
+            const customAddons = [];
+            document.querySelectorAll('.admin-addon-name').forEach((input, index) => {
+                const aName = input.value.trim();
+                const aPrice = parseFloat(document.querySelectorAll('.admin-addon-price')[index].value) || 0;
+                if (aName) {
+                    customAddons.push({ id: 'custom_add_' + Date.now() + '_' + index, name: aName, price: aPrice });
+                }
+            });
+
+            if (editId) {
+                const prodIndex = PRODUCTS.findIndex(p => p.id === editId);
+                if (prodIndex !== -1) {
+                    PRODUCTS[prodIndex].name = title;
+                    PRODUCTS[prodIndex].category = cat;
+                    PRODUCTS[prodIndex].price = price;
+                    PRODUCTS[prodIndex].image = img;
+                    PRODUCTS[prodIndex].desc = desc || 'Sveže pripremljeno sa vrhunskim sastojcima.';
+                    PRODUCTS[prodIndex].customAddons = customAddons;
+                    PRODUCTS[prodIndex].hasAddons = customAddons.length > 0 || ['pizza', 'burgers', 'pasta', 'dessert'].includes(cat);
+                    showToast(`Proizvod "${title}" je uspešno izmenjen!`);
+                }
+            } else {
+                const newProd = {
+                    id: 'custom_' + Date.now(),
+                    name: title,
+                    category: cat,
+                    price: price,
+                    rating: 5.0,
+                    image: img,
+                    desc: desc || 'Sveže pripremljeno sa vrhunskim sastojcima.',
+                    hasAddons: customAddons.length > 0 || ['pizza', 'burgers', 'pasta', 'dessert'].includes(cat),
+                    customAddons: customAddons
+                };
+                PRODUCTS.unshift(newProd);
+                showToast(`Novi proizvod "${title}" dodat u meni!`);
+            }
+
+            saveProductsToStorage();
+            resetAdminForm();
+            renderProducts();
+            renderAdminDeleteList();
+        }
+
+        function editProductInMenu(productId) {
+            const prod = PRODUCTS.find(p => p.id === productId);
+            if (!prod) return;
+
+            document.getElementById('admin-p-edit-id').value = prod.id;
+            document.getElementById('admin-p-title').value = prod.name;
+            document.getElementById('admin-p-cat').value = prod.category;
+            document.getElementById('admin-p-price').value = prod.price;
+            document.getElementById('admin-p-image').value = prod.image;
+            document.getElementById('admin-p-desc').value = prod.desc;
+
+            document.getElementById('admin-addons-inputs-container').innerHTML = '';
+            if (prod.customAddons && prod.customAddons.length > 0) {
+                prod.customAddons.forEach(add => addAdminAddonInputRow(add.name, add.price));
+            } else {
+                addAdminAddonInputRow();
+            }
+
+            document.getElementById('admin-form-title').innerText = 'Izmeni Proizvod na Meniju';
+            document.getElementById('admin-p-submit-btn').innerText = 'Sačuvaj Izmene';
+            document.getElementById('admin-p-cancel-btn').classList.remove('hidden');
+            document.getElementById('admin-modal').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetAdminForm() {
+            document.getElementById('admin-p-edit-id').value = '';
+            document.getElementById('admin-p-title').value = '';
+            document.getElementById('admin-p-cat').value = 'pizza';
+            document.getElementById('admin-p-price').value = '';
+            document.getElementById('admin-p-image').value = '';
+            document.getElementById('admin-p-desc').value = '';
+            document.getElementById('admin-addons-inputs-container').innerHTML = '';
+            addAdminAddonInputRow();
+            document.getElementById('admin-form-title').innerText = 'Dodaj Novi Proizvod u Meni';
+            document.getElementById('admin-p-submit-btn').innerText = 'Sačuvaj i Objavi Proizvod';
+            document.getElementById('admin-p-cancel-btn').classList.add('hidden');
+        }
+
+        function deleteProductFromMenu(productId) {
+            if (confirm('Da li ste sigurni da želite da izbrišete ovu stvar sa menija?')) {
+                PRODUCTS = PRODUCTS.filter(p => p.id !== productId);
+                saveProductsToStorage();
+                renderProducts();
+                renderAdminDeleteList();
+                showToast('Proizvod je izbrisan sa menija.');
+            }
+        }
+
+        function renderAdminDeleteList() {
+            const container = document.getElementById('admin-delete-list');
+            if (!container) return;
+
+            if (PRODUCTS.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-400 italic text-center py-4">Meni je trenutno prazan.</p>';
+                return;
+            }
+
+            container.innerHTML = PRODUCTS.map(p => `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 gap-2">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-8 h-8 rounded-lg object-cover flex-shrink-0">
+                        <div class="truncate">
+                            <p class="font-bold text-gray-800 dark:text-gray-200 truncate leading-tight">${p.name}</p>
+                            <p class="text-[10px] text-gray-400">${p.price} RSD • <span class="uppercase">${p.category}</span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <button onclick="editProductInMenu('${p.id}')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white rounded-lg text-[11px] font-bold transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteProductFromMenu('${p.id}')" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-lg text-[11px] font-bold transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('tasty_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('tasty_theme', 'dark');
+            }
+        }
+
+        if (localStorage.getItem('tasty_theme') === 'dark' || (!('tasty_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = 'fa-solid fa-sun';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const text = document.getElementById('toast-text');
+            text.innerText = message;
+
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
