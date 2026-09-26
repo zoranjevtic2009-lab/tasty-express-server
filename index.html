@@ -1339,7 +1339,6 @@
                 const response = await fetch(`${SERVER_URL}/api/orders`);
                 allOrders = await response.json();
                 
-                // Ako je aktivna porudžbina korisnika dostigla etapu 4 (ili obrisana), sakrij dugme za praćenje
                 if (activeOrder) {
                     const found = allOrders.find(o => String(o.id) === String(activeOrder.id));
                     if (!found || found.step >= 4) {
@@ -1501,7 +1500,6 @@
 
         function renderAdminOrders() {
             const tbody = document.getElementById('admin-orders-table');
-            // Prikazujemo samo one porudžbine čija etapa je manja od 4 (jer se isporučene sklanjaju)
             let activeOrdersList = allOrders.filter(ord => (ord.step || 1) < 4);
 
             if (activeOrdersList.length === 0) {
@@ -1560,7 +1558,6 @@
                     
                     if (stepNum === 4) {
                         showToast(`Porudžbina #${orderId} je isporučena i sklonjena sa panela.`);
-                        // Ako je to bila narudžbina ubačena od strane trenutnog klijenta, sakrij meni praćenja
                         if (activeOrder && String(activeOrder.id) === String(orderId)) {
                             activeOrder = null;
                             localStorage.removeItem('tasty_active_order');
